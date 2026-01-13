@@ -174,7 +174,7 @@
       <i class="fa-solid fa-location-dot"></i>
       <div class="text-sm">
         <p class="font-bold">{locationErrorMessage}</p>
-        <p class="text-xs opacity-90">Affichage des parkings par défaut (Londres).</p>
+        <p class="text-xs opacity-90">Affichage des parkings par défaut.</p>
       </div>
       <button on:click={() => locationError = false} aria-label="Fermer l'avertissement" class="ml-2">
         <i class="fa-solid fa-xmark"></i>
