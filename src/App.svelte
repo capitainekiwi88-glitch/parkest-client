@@ -113,10 +113,10 @@
         locationError = true;
         locationErrorMessage = "Impossible de déterminer votre position GPS";
         console.error('Could not get initial position', e);
-        position.longitude = -0.109530; // Pour afficher les parkings même sans position (TEST SEULEMENT - A SUPPRIMER)
-        position.latitude = 51.553059; // IDEM  ----------------------------------------------------------------------
-        map.longitude =  -0.109530; 
-        map.latitude = 51.553059;
+        position.longitude = 6.1757; // Pour afficher les parkings même sans position (TEST SEULEMENT - A SUPPRIMER)
+        position.latitude = 49.1193; // IDEM  ----------------------------------------------------------------------
+        map.longitude =  6.1757; 
+        map.latitude = 49.1193;
       }
 
       map.loadMap();
