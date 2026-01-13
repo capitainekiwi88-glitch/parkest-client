@@ -25,7 +25,7 @@ export class User {
             throw error;
         }
     }
-}
+
 
     async register(username: string, password: string): Promise<void> {
         try {
