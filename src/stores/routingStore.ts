@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import * as maptilersdk from '@maptiler/sdk';
 
 export const routingState = writable({
     isVisible: false,

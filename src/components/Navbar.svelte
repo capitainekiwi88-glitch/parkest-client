@@ -32,17 +32,17 @@
             <p class="text-sm font-semibold text-gray-500 uppercase">Mes Filtres</p>
             
             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
-                <input type="checkbox" bind:checked={$UserContent.pmr} class="w-5 h-5" />
+                <input type="checkbox" bind:checked={$UserContent.pmr} on:change={() => $UserContent.updateParams()} class="w-5 h-5" />
                 <span><i class="fa-solid fa-wheelchair text-blue-500 w-6"></i> Accès PMR</span>
             </label>
 
             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
-                <input type="checkbox" bind:checked={$UserContent.free} class="w-5 h-5" />
+                <input type="checkbox" bind:checked={$UserContent.free} on:change={() => $UserContent.updateParams()} class="w-5 h-5" />
                 <span><i class="fa-solid fa-hand-holding-dollar text-green-500 w-6"></i> Gratuit</span>
             </label>
 
             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
-                <input type="checkbox" bind:checked={$UserContent.elec} class="w-5 h-5" />
+                <input type="checkbox" bind:checked={$UserContent.elec} on:change={() => $UserContent.updateParams()} class="w-5 h-5" />
                 <span><i class="fa-solid fa-bolt text-yellow-500 w-6"></i> Électrique</span>
             </label>
         </div>

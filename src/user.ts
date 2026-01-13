@@ -1,4 +1,4 @@
-import { Login, Register } from "./api";
+import { GetParams, Login, Register, UpdateParams } from "./api";
 
 export class User {
     hauteur: number;
@@ -17,16 +17,13 @@ export class User {
         this.dspOnly = dspOnly;
     }
 
-    async login(username: string, password: string): Promise<void> {
-    const data = await Login(username, password);
-    this.token = data.token;
-    this.username = username;
-    if (data.params) {
-        this.hauteur = data.params.hauteur;
-        this.pmr = data.params.pmr;
-        this.free = data.params.free;
-        this.elec = data.params.elec;
-        this.dspOnly = data.params.dspOnly;
+    async login(username: string, password: string): Promise<void>{
+        try {
+            this.token = (await Login(username, password)).token;
+            this.username = username;
+        } catch (error) {
+            throw error;
+        }
     }
 }
 
@@ -35,6 +32,28 @@ export class User {
             const data = await Register(username, password);
             this.token = data.token;
             this.username = username;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateParams(): Promise<void>{
+        try {
+            await UpdateParams(this.token, this.hauteur, this.pmr, this.dspOnly, this.elec, this.free);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async fetchParams(): Promise<void>{
+        try {
+            const data = await GetParams(this.token);
+            this.hauteur = data.hauteur;
+            this.pmr = data.pmr;
+            this.dspOnly = data.dspOnly;
+            this.elec = data.elec;
+            this.free = data.free;
+            console.log("fetched params", data);
         } catch (error) {
             throw error;
         }

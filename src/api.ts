@@ -24,15 +24,13 @@ export async function Register(username: string, password: string) {
   }
 }
 
-export async function UpdateParams(token: string, params: any) {
+export async function UpdateParams(token: string, hauteur: number, pmr: boolean, dspOnly: boolean, elec: boolean, free: boolean) {
   try {
-    const res = await axios.post(parkestApi + "updateParams", { 
-      token, 
-      params 
-    });
+    const res = await axios.post(parkestApi + "updateParams", { token: token, params: { hauteur: hauteur, pmr: pmr, dspOnly: dspOnly, elec: elec, free: free } });
     if (res.status !== 200) throw new Error("update failed");
     return res.data;
   } catch (error) {
+    console.error("Erreur de mise à jour détaillée :", error);
     throw new Error("update failed");
   }
 }
