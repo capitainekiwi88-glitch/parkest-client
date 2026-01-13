@@ -36,7 +36,9 @@
   const deviceHeight = window.innerHeight;
   const deviceWidth = window.innerWidth;
   let openSideMenu = false;
-
+  let showNoResultWarning = false;
+  let locationError = false;
+  let locationErrorMessage = "";
   const position: Position = new Position();
   const parking = new Parking();
   onMount(() => {
@@ -53,15 +55,32 @@
   }
 
   // refresh markers when dspOnly changes and map exists
-  $: if ($mapStore && $UserContent.dspOnly !== undefined) {
+  $: if ($mapStore && $UserContent) {
     (async () => {
       try {
-        $mapStore.clearParkingMarkers();
-        $mapStore.setParkingMarkers(
-        parking.getNearParkings(new LngLat(position.longitude, position.latitude), $UserContent.dspOnly)
+        const prefs = [
+          $UserContent.free ? 1 : 0,
+          $UserContent.pmr ? 1 : 0,
+          $UserContent.elec ? 1 : 0
+        ];
+        const LngLatActuel = new LngLat(position.longitude, position.latitude);
+        let filtered = parking.getNearParkings(
+          LngLatActuel,
+          $UserContent.dspOnly,
+          30000, // Rayon
+          prefs
         );
+
+        if(filtered.length === 0){
+          showNoResultWarning = true;
+          setTimeout(() => { showNoResultWarning = false; }, 3000);  
+        } else {
+          showNoResultWarning = false;
+        }
+        $mapStore.clearParkingMarkers();
+        $mapStore.setParkingMarkers(filtered);
       } catch (e) {
-        console.error('Failed to refresh parkings', e);
+        console.error("Erreur rafraîchissement parkings", e);
       }
     })();
   }
@@ -89,12 +108,15 @@
         await position.getPosition();
         map.longitude = position.longitude;
         map.latitude = position.latitude;
+        locationError = false;
       } catch (e) {
+        locationError = true;
+        locationErrorMessage = "Impossible de déterminer votre position GPS";
         console.error('Could not get initial position', e);
-        position.longitude = 0.1278; // Pour afficher les parkings même sans position (TEST SEULEMENT - A SUPPRIMER)
-        position.latitude = 51.5074; // IDEM  ----------------------------------------------------------------------
-        map.longitude =  0.1278; 
-        map.latitude = 51.5074;
+        position.longitude = -0.109530; // Pour afficher les parkings même sans position (TEST SEULEMENT - A SUPPRIMER)
+        position.latitude = 51.553059; // IDEM  ----------------------------------------------------------------------
+        map.longitude =  -0.109530; 
+        map.latitude = 51.553059;
       }
 
       map.loadMap();
@@ -167,6 +189,24 @@
 
 <main class="flex flex-col justify-center items-center" style="height: {deviceHeight}px; width: {deviceWidth}px; ">
 
+  {#if showNoResultWarning}
+    <div class="absolute top-20 z-50 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold transition-opacity">
+      <i class="fa-solid fa-circle-exclamation mr-2"></i>
+      Aucun parking ne correspond à vos filtres.
+    </div>
+  {/if}
+  {#if locationError}
+    <div class="absolute top-5 z-50 bg-orange-500 text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 border-2 border-white animate-bounce">
+      <i class="fa-solid fa-location-dot"></i>
+      <div class="text-sm">
+        <p class="font-bold">{locationErrorMessage}</p>
+        <p class="text-xs opacity-90">Affichage des parkings par défaut (Londres).</p>
+      </div>
+      <button on:click={() => locationError = false} aria-label="Fermer l'avertissement" class="ml-2">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  {/if}
   {#if $UserContent.token === ""}
 
     <LoginRegisterForm UserContent={UserContent} />

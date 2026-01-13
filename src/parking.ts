@@ -83,6 +83,8 @@ export class Parking {
                     place_tot: feature.properties.place_total,
                     place_dispo: feature.properties.place_libre,
                     payant: feature.properties.cout === null ? false : true,
+                    pmr : 0,
+                    borne_recharge : 0,
                     cout: feature.properties.cout,
                     coordinates: {
                         lattitude: feature.geometry.coordinates[1],

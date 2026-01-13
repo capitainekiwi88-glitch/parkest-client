@@ -18,10 +18,10 @@ export function normalizeTflParking(tflData: any[]) {
                 lib: place.commonName,
                 place_tot: totalSpacesStr ? parseInt(totalSpacesStr, 10) : null,
                 place_dispo: null,
-                payant : dailyPrice ? true : false,
-                cout: dailyPrice ? `Daily: £${dailyPrice}` : null,
+                payant : true, 
+                cout: dailyPrice ? `Daily: £${dailyPrice}` : "Check signs",
                 pmr: disabledSpacesStr ? parseInt(disabledSpacesStr, 10) : 0,
-                borne_recharge: chargingPointsStr === 'False' ? 0 : chargingPointsStr,
+                borne_recharge: (chargingPointsStr === 'False' || !chargingPointsStr) ? 0 : parseInt(chargingPointsStr, 10),
                 coordinates: {
                     lattitude: place.lat,
                     longitude: place.lon

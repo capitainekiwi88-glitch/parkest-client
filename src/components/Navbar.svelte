@@ -1,27 +1,57 @@
 <script lang="ts">
     import { goto } from "@mateothegreat/svelte5-router";
+    import { UserContent } from '../stores/userStore'; // Import du store
 
     export let open: boolean = false;
-
 </script>
 
-<nav class="absolute left-1 top-1 z-20 bg-white p-2 rounded-md flex gap-4">
-    <button class="cursor-pointer" on:click={() => open = !open}><i class="fa-solid fa-bars"></i></button>
-    <button class="cursor-pointer" on:click={() => goto("/")} ><i class="fa-solid fa-house"></i></button>
+<nav class="absolute left-1 top-6 z-20 bg-white p-3 rounded-md flex gap-6 shadow-md mt-[env(safe-area-inset-top)]">    <button class="cursor-pointer" on:click={() => open = !open}>
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <button class="cursor-pointer" on:click={() => goto("/")}>
+        <i class="fa-solid fa-house"></i>
+    </button>
 </nav>
 
 <aside class:open class="bg-black/50 w-full h-full" on:click={() => open = false}>
-    <div class="w-1/4 margin-3 rounded-lg bg-white h-full flex flex-col" on:click|stopPropagation>
-        <div>
-            <button class="cursor-pointer relative left-1 top-0" on:click={() => open = false}><i class="fa-solid fa-xmark"></i></button>
+    <div class="w-2/3 md:w-1/4 p-4 rounded-r-lg bg-white h-full flex flex-col shadow-xl" on:click|stopPropagation>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="font-bold text-xl">Menu</h2>
+            <button class="cursor-pointer text-xl" on:click={() => open = false}>
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
-        <button class="cursor-pointer" on:click={() => { goto("/parametres"); open = false; }}><h2>Paramètres</h2></button>
+
+        <div class="flex flex-col gap-4 border-t border-b py-4 mb-4">
+            <p class="text-sm font-semibold text-gray-500 uppercase">Mes Filtres</p>
+            
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                <input type="checkbox" bind:checked={$UserContent.pmr} class="w-5 h-5" />
+                <span><i class="fa-solid fa-wheelchair text-blue-500 w-6"></i> Accès PMR</span>
+            </label>
+
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                <input type="checkbox" bind:checked={$UserContent.free} class="w-5 h-5" />
+                <span><i class="fa-solid fa-hand-holding-dollar text-green-500 w-6"></i> Gratuit</span>
+            </label>
+
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                <input type="checkbox" bind:checked={$UserContent.elec} class="w-5 h-5" />
+                <span><i class="fa-solid fa-bolt text-yellow-500 w-6"></i> Électrique</span>
+            </label>
+        </div>
+
+        <button class="cursor-pointer text-left p-2 hover:bg-gray-100 rounded flex items-center gap-3" 
+                on:click={() => { goto("/parametres"); open = false; }}>
+            <i class="fa-solid fa-gear text-gray-600 w-6"></i>
+            <span class="font-medium">Paramètres</span>
+        </button>
     </div>
 </aside>
 
 <style>
     aside {
-        transition: opacity 0.5s ease-in-out;
+        transition: opacity 0.3s ease-in-out;
         left: -100%;
         position: absolute;
         z-index: 40;
