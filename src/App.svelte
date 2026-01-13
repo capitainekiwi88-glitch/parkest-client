@@ -150,7 +150,13 @@
   }
 
   onMount(() => {
-    mapInit();
+    if ($UserContent.token !== "") {
+      (async () => {
+        await $UserContent.fetchParams();
+        UserContent.update(n => n);
+        await mapInit();
+      })();
+    }
   });
 
 </script>

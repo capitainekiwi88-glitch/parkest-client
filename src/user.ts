@@ -1,4 +1,4 @@
-import { Login, Register } from "./api";
+import { GetParams, Login, Register, UpdateParams } from "./api";
 
 class User{
 
@@ -20,7 +20,7 @@ class User{
 
     async login(username: string, password: string): Promise<void>{
         try {
-            this.token = await Login(username, password);
+            this.token = (await Login(username, password)).token;
             this.username = username;
         } catch (error) {
             throw error;
@@ -31,6 +31,28 @@ class User{
         try {
             this.token = await Register(username, password);
             this.username = username;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateParams(): Promise<void>{
+        try {
+            await UpdateParams(this.token, this.hauteur, this.pmr, this.dspOnly, this.elec, this.free);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async fetchParams(): Promise<void>{
+        try {
+            const data = await GetParams(this.token);
+            this.hauteur = data.hauteur;
+            this.pmr = data.pmr;
+            this.dspOnly = data.dspOnly;
+            this.elec = data.elec;
+            this.free = data.free;
+            console.log("fetched params", data);
         } catch (error) {
             throw error;
         }
