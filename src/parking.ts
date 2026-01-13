@@ -3,10 +3,12 @@ import { normalizeLyonParking } from "./parkingNormalizationUtils/normalizeLyonP
 import { normalizeParisParking} from "./parkingNormalizationUtils/normalizeParisParking"
 import { normalizeTflParking } from "./parkingNormalizationUtils/normalizeTflParking";
 import { normalizeMetzParking } from "./parkingNormalizationUtils/normalizeMetzParking";
+
 const apiLyon = import.meta.env.VITE_LYON_KEY;
 const apiMetz = import.meta.env.VITE_METZ_KEY;
 const apiParis = import.meta.env.VITE_PARIS_KEY;
 const apiTfl = import.meta.env.VITE_TFL_KEY;
+
 export class Parking {
     parkingsDsp : any[] = [];
     parkings : any[] = [];
