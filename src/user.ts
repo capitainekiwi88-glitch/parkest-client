@@ -1,6 +1,6 @@
 import { Login, Register } from "./api";
 
-class User {
+export class User {
     hauteur: number;
     pmr: boolean;
     dspOnly: boolean;

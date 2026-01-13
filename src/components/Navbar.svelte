@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from "@mateothegreat/svelte5-router";
     import { UserContent } from '../stores/userStore'; // Import du store
-
+    import { User } from '../user';
     export let open: boolean = false;
     function logout() {
         localStorage.removeItem('user');
