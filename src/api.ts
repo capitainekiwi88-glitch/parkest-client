@@ -2,7 +2,7 @@ import axios from "axios";
 
 const parkestApi = "https://parking-api-ymux.onrender.com/api/";
 
-export async function Login(username: string, password: string) {
+export async function login(username: string, password: string) {
   try {
     const res = await axios.post(parkestApi + "login", { username, password });
     if (res.status !== 200) throw new Error("login failed");
@@ -13,7 +13,7 @@ export async function Login(username: string, password: string) {
   }
 }
 
-export async function Register(username: string, password: string) {
+export async function register(username: string, password: string) {
   try {
     const res = await axios.post(parkestApi + "register", { username, password });
     if (res.status !== 200) throw new Error("register failed");
@@ -24,17 +24,20 @@ export async function Register(username: string, password: string) {
   }
 }
 
-export async function UpddateParams(token: string, hauteur: number, pmr: boolean, dspOnly: boolean, electrique: boolean) {
+export async function updateParams(token: string, params: any) {
   try {
-    const res = await axios.post(parkestApi + "updateParams", { token, hauteur, pmr, dspOnly, electrique });
+    const res = await axios.post(parkestApi + "updateParams", { 
+      token, 
+      params 
+    });
     if (res.status !== 200) throw new Error("update failed");
     return res.data;
-  } catch {
+  } catch (error) {
     throw new Error("update failed");
   }
 }
 
-export async function GetParams(token: string) {
+export async function getParams(token: string) {
   try {
     const res = await axios.get(parkestApi + "getParams", { params: { token } });
     if (res.status !== 200) throw new Error("get params failed");
