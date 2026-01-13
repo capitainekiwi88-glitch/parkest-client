@@ -4,8 +4,8 @@ import { routingState } from './stores/routingStore';
 
 class Map {
     map: maptilersdk.Map = {} as maptilersdk.Map;
-    private API_KEY: string = '1nbw0HVdWw3MdIEhMg9Z';
-    private GH_API_KEY: string = 'bf6b9543-329f-4e71-b34e-8e1564b47d95';
+    private API_KEY: string = import.meta.env.VITE_MAPTILER_KEY;
+    private GH_API_KEY: string = import.meta.env.VITE_GH_KEY;
     private routing: Routing;
     longitude: number = 0;
     latitude: number = 0;

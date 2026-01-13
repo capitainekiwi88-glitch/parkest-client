@@ -2,7 +2,6 @@
   import { Geolocation } from '@capacitor/geolocation'
   import { Router, type RouteConfig } from "@mateothegreat/svelte5-router";
   import "@maptiler/sdk/dist/maptiler-sdk.css";
-  import User from './user';
   import Position from './position';
   import Map from './map';
   import { Parking } from './parking';
@@ -10,7 +9,6 @@
   import { onMount } from 'svelte';
   import Navbar from './components/Navbar.svelte';
   import Home from './routes/Home.svelte';
-  import Params from './routes/Params.svelte';
   import RoutingComponent from './components/Routing.svelte';
   import LoginRegisterForm from './components/LoginRegisterForm.svelte';
   import { get } from 'svelte/store';
@@ -20,16 +18,10 @@
 
   let hasArrived = false;
   let isInitialLoading = true;
+
   const routes: RouteConfig[] = [
     {
       component: Home,
-    },
-    {
-      path: "parametres",
-      component: Params,
-      props: {
-        UserContent
-      }
     }
   ];
 
@@ -41,15 +33,12 @@
   let locationErrorMessage = "";
   const position: Position = new Position();
   const parking = new Parking();
-  onMount(() => {
-    mapInit();
-  });
+
   // Clear route when routing component is closed
   $: if (!$routingState.isVisible) {
     const currentMap = get(mapStore);
     if (currentMap) {
       currentMap.clearRoute();
-      currentMap.map.easeTo({pitch: 0, bearing:0,zoom:15});
     }
     hasArrived = false;
   }
@@ -82,6 +71,7 @@
         }
         $mapStore.clearParkingMarkers();
         $mapStore.setParkingMarkers(filtered);
+        $mapStore.drawRoute($routingState.LngLat.lng, $routingState.LngLat.lat, $routingState.destination);
       } catch (e) {
         console.error("Erreur rafraîchissement parkings", e);
       }
@@ -90,7 +80,6 @@
 
   async function mapInit() {
     console.log('mapInit started');
-    let map = get(mapStore);
     
     // Ensure permissions are checked/requested before proceeding
     try {
@@ -102,82 +91,52 @@
       console.error('Error checking permissions in mapInit', e);
     }
 
-    if (!map) {
-      console.log('Creating new Map instance');
-      map = new Map('map');
-      mapStore.set(map);
-      
-      try {
-        await position.getPosition();
-        map.longitude = position.longitude;
-        map.latitude = position.latitude;
-        locationError = false;
-      } catch (e) {
-        locationError = true;
-        locationErrorMessage = "Impossible de déterminer votre position GPS";
-        console.error('Could not get initial position', e);
-        position.longitude = 6.1757; // Pour afficher les parkings même sans position (TEST SEULEMENT - A SUPPRIMER)
-        position.latitude = 49.1193; // IDEM  ----------------------------------------------------------------------
-        map.longitude =  6.1757; 
-        map.latitude = 49.1193;
-      }
-
-      map.loadMap();
-      position.setWatcher((lat: number, lng: number) => {
-        map!.setPosition(lat, lng);
-        const currentRoute = get(routingState);
-        if(currentRoute.isVisible && currentRoute.LngLat && !hasArrived){
-          const userLocation = new LngLat(lng, lat);
-          const destinationLocation = new LngLat(currentRoute.LngLat.lng, currentRoute.LngLat.lat);
-          const distance = userLocation.distanceTo(destinationLocation);
-
-          if(distance < 40){
-            hasArrived = true;
-            triggerArrivalAnimation(map,destinationLocation);
-            console.log("Vous êtes arrivé à destination !");
-          }
-        }
-      });
-      await parking.fetchParkings();
-      isInitialLoading = false;
-      console.log(parking.parkings.length + ' parkings loaded');
-      const largeRadius = 50000; 
-      map.setParkingMarkers(parking.getNearParkings(new LngLat(position.longitude, position.latitude), $UserContent.dspOnly, largeRadius, [0,0,0]));
-    } else {
-      console.log('Using existing Map instance');
-      map.loadMap();
-      
-      // Re-attach watcher
-      position.setWatcher((lat: number, lng: number) => {
-        map!.setPosition(lat, lng);
-        const currentRoute = get(routingState);
-        if(currentRoute.isVisible && currentRoute.LngLat && !hasArrived){
-          const userLocation = new LngLat(lng, lat);
-          const destinationLocation = new LngLat(currentRoute.LngLat.lng, currentRoute.LngLat.lat);
-          const distance = userLocation.distanceTo(destinationLocation);
-
-          if(distance < 40){
-            hasArrived = true;
-            triggerArrivalAnimation(map, destinationLocation);
-            console.log("Vous êtes arrivé à destination !");
-          }
-        }
-      });
-      
-      // Check if we need to fetch
-      if (parking.parkings.length === 0) {
-         await parking.fetchParkings();
-      }
-      const largeRadius = 50000; 
-      map!.setParkingMarkers(parking.getNearParkings(new LngLat(position.longitude, position.latitude), $UserContent.dspOnly, largeRadius));
+    console.log('Creating new Map instance');
+    const map = new Map('map');
+    mapStore.set(map);
+    
+    try {
+      await position.getPosition();
+      map.longitude = position.longitude;
+      map.latitude = position.latitude;
+      locationError = false;
+    } catch (e) {
+      locationError = true;
+      locationErrorMessage = "Impossible de déterminer votre position GPS";
+      console.error('Could not get initial position', e);
+      position.longitude = 6.1757; // Pour afficher les parkings même sans position (TEST SEULEMENT - A SUPPRIMER)
+      position.latitude = 49.1193; // IDEM  ----------------------------------------------------------------------
+      map.longitude =  6.1757; 
+      map.latitude = 49.1193;
     }
 
-      const routeState = get(routingState);
-      if (routeState.isVisible && routeState.LngLat) {
-        console.log('Redrawing route on existing map');
-        map.drawRoute(routeState.LngLat.lng, routeState.LngLat.lat, routeState.destination);
+    map.loadMap();
+    position.setWatcher((lat: number, lng: number) => {
+      
+      map!.setPosition(lat, lng);
+      const currentRoute = get(routingState);
+
+      if (currentRoute.isVisible && currentRoute.LngLat && !hasArrived) {
+        const userLocation = new LngLat(lng, lat);
+        const destinationLocation = new LngLat(currentRoute.LngLat.lng, currentRoute.LngLat.lat);
+        const distance = userLocation.distanceTo(destinationLocation);
+
+        if (distance < 40) {
+          hasArrived = true;
+          triggerArrivalAnimation(map,destinationLocation);
+          console.log("Vous êtes arrivé à destination !");
+        }
       }
-    }
+    });
+
+    await parking.fetchParkings();
+    isInitialLoading = false;
+    console.log(parking.parkings.length + ' parkings loaded');
+    const largeRadius = 50000; 
+    map.setParkingMarkers(parking.getNearParkings(new LngLat(position.longitude, position.latitude), $UserContent.dspOnly, largeRadius, [0,0,0]));
+    
+  }
+
   function triggerArrivalAnimation(mapInstance: any, target: LngLat) {
     if (!mapInstance || !mapInstance.map) return;
     mapInstance.map.flyTo({
@@ -187,8 +146,13 @@
         bearing: -45,
         speed: 0.8,
         essential: true
+    });
+  }
+
+  onMount(() => {
+    mapInit();
   });
-}
+
 </script>
 
 <main class="flex flex-col justify-center items-center" style="height: {deviceHeight}px; width: {deviceWidth}px; ">
