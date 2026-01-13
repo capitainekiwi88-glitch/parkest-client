@@ -52,7 +52,7 @@ Pour générer l'APK avec Capacitor :
 ## 🔒 Sécurité et Variables d'Environnement
 
 Le projet utilise des variables d'environnement pour protéger les données sensibles.
-> **Important :** Nous ne poussons pas le lien de connexion MongoDB (`mongodb+srv://...`) dans le code GitHub mais nous utilisons Ne jamais pousser le lien de connexion MongoDB : `process.env.MONGO_URI` (`mongodb+srv://...`).
+> **Important :** Nous ne poussons pas le lien de connexion MongoDB (`mongodb+srv://...`) dans le code GitHub mais nous utilisons : `process.env.MONGO_URI`.
 
 
 ---
@@ -70,6 +70,7 @@ Le projet utilise des variables d'environnement pour protéger les données sens
 * **Cold Start :** Sur Render (version gratuite), l'API peut mettre 30 secondes à répondre lors de la première requête après une inactivité.
 * **CORS :** L'API est configurée pour accepter les requêtes provenant du domaine Vercel.
 * **Permissions :** La géolocalisation nécessite une connexion HTTPS (fournie par Vercel) pour fonctionner sur navigateur mobile.
+
 
 
 
