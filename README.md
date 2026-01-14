@@ -2,7 +2,8 @@
 
 Parkest est une application web et mobile (PWA/Android) permettant de localiser des places de parking en fonction de critères spécifiques (PMR, bornes électriques, gratuité). 
 
-
+* **Vous souhaitez voir à quoi ressemble l'application ?.
+https://parkest-client.vercel.app/
 
 ---
 
@@ -70,6 +71,7 @@ Le projet utilise des variables d'environnement pour protéger les données sens
 * **Cold Start :** Sur Render (version gratuite), l'API peut mettre 30 secondes à répondre lors de la première requête après une inactivité.
 * **CORS :** L'API est configurée pour accepter les requêtes provenant du domaine Vercel.
 * **Permissions :** La géolocalisation nécessite une connexion HTTPS (fournie par Vercel) pour fonctionner sur navigateur mobile.
+
 
 
 
